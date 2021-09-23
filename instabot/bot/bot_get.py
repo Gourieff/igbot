@@ -270,20 +270,20 @@ def get_media_comments(self, media_id, only_text=False):
 
 
 def get_media_comments_all(self, media_id, only_text=False, count=False):
-    has_more_comments = True
+    has_next_page = True
     max_id = ""
     comments = []
 
-    while has_more_comments:
+    while has_next_page:
         self.api.get_media_comments(media_id, max_id=max_id)
         for comment in self.api.last_json["comments"]:
             comments.append(comment)
-        has_more_comments = self.api.last_json["has_more_comments"]
+        has_next_page = self.api.last_json["has_next_page"]
         if count and len(comments) >= count:
             comments = comments[:count]
-            has_more_comments = False
+            has_next_page = False
             self.logger.info("Getting comments stopped by count (%s)." % count)
-        if has_more_comments:
+        if has_next_page:
             max_id = self.api.last_json["next_max_id"]
 
     if only_text:
